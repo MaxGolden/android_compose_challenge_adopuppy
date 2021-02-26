@@ -2,11 +2,13 @@ package com.example.adopuppymax.ui.puppy
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Pets
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -26,6 +28,7 @@ import com.example.adopuppymax.ui.main.PuppyListItem
 import com.example.adopuppymax.ui.main.PuppyRepo
 import com.example.adopuppymax.ui.main.puppies
 import com.example.adopuppymax.ui.theme.PuppyMaxTheme
+import com.example.adopuppymax.ui.utils.AnimatingFabContent
 import com.example.adopuppymax.ui.utils.scrim
 import dev.chrisbanes.accompanist.insets.navigationBarsPadding
 import dev.chrisbanes.accompanist.insets.statusBarsPadding
@@ -59,12 +62,21 @@ private fun PuppyDescription(
     selectPuppy: (Long) -> Unit,
     upPress: () -> Unit
 ) {
-    Surface(modifier = Modifier.fillMaxSize()) {
-        LazyColumn {
-            item { PuppyDescriptionHeader(puppy, upPress) }
-            item { PuppyDescriptionBody(puppy) }
-            item { RelatedPuppies(puppy.id, selectPuppy) }
+    val scrollState = rememberScrollState()
+    BoxWithConstraints {
+        Surface(modifier = Modifier
+            .fillMaxSize()
+        ) {
+            Column(modifier = Modifier.verticalScroll(scrollState)) {
+                PuppyDescriptionHeader(puppy, upPress)
+                PuppyDescriptionBody(puppy)
+                RelatedPuppies(puppy.id, selectPuppy)
+            }
         }
+        ProfileFab(
+            extended = scrollState.value == 0,
+            modifier = Modifier.align(Alignment.BottomEnd)
+        )
     }
 }
 
@@ -270,6 +282,35 @@ private fun RelatedPuppies(
     }
 }
 
+@Composable
+fun ProfileFab(extended: Boolean, modifier: Modifier = Modifier) {
+    FloatingActionButton(
+        onClick = { /* TODO */ },
+        modifier = modifier
+            .padding(16.dp)
+            .navigationBarsPadding()
+            .height(48.dp)
+            .widthIn(min = 48.dp),
+        backgroundColor = MaterialTheme.colors.primary,
+        contentColor = MaterialTheme.colors.onPrimary
+    ) {
+        AnimatingFabContent(
+            icon = {
+                Icon(
+                    imageVector = Icons.Outlined.Pets,
+                    contentDescription = stringResource(R.string.adopt_me)
+                )
+            },
+            text = {
+                Text(
+                    style = MaterialTheme.typography.subtitle1,
+                    text = stringResource(id = R.string.adopt_me),
+                )
+            },
+            extended = extended
+        )
+    }
+}
 
 @Preview(name = "Puppy Details")
 @Composable
