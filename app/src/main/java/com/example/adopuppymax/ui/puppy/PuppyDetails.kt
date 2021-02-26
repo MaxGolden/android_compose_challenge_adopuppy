@@ -282,13 +282,3 @@ private fun PuppyDetailsPreview() {
         upPress = { }
     )
 }
-
-//@Preview(name = "Related")
-//@Composable
-//private fun RelatedPuppiesPreview() {
-//    val related = puppies.random()
-//    RelatedPuppies(
-//        puppyId = related.id,
-//        selectPuppy = { }
-//    )
-//}

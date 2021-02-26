@@ -19,24 +19,20 @@ package com.example.adopuppymax.ui.main
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.OndemandVideo
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.example.adopuppymax.R
 import com.example.adopuppymax.ui.theme.PuppyTheme
 
 @Composable
@@ -56,9 +52,10 @@ fun PuppyListItem(
     ) {
         Row(modifier = Modifier.clickable(onClick = onClick)) {
             Image(
-                painter = painterResource(id = R.drawable.ic_pets_white_24dp),
+                painter = painterResource(id = puppy.thumbResource),
                 contentDescription = null,
-                modifier = Modifier.aspectRatio(1f)
+                modifier = Modifier.aspectRatio(1f),
+                contentScale = ContentScale.Crop
             )
             Column(
                 modifier = Modifier.padding(
@@ -70,6 +67,7 @@ fun PuppyListItem(
             ) {
                 Text(
                     text = puppy.name,
+                    color = MaterialTheme.colors.primary,
                     style = titleStyle,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
@@ -77,27 +75,20 @@ fun PuppyListItem(
                         .weight(1f)
                         .padding(bottom = 4.dp)
                 )
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Rounded.OndemandVideo,
-                        tint = MaterialTheme.colors.primary,
-                        contentDescription = null,
-                        modifier = Modifier.size(iconSize)
-                    )
-                    Text(
-                        text = stringResource(
-                            R.string.puppy_available,
-                            puppy.name,
-                            puppy.age
-                        ),
-                        color = MaterialTheme.colors.primary,
-                        style = MaterialTheme.typography.caption,
-                        modifier = Modifier
-                            .padding(start = 8.dp)
-                            .weight(1f)
-                            .wrapContentWidth(Alignment.Start)
-                    )
-                }
+                Text(
+                    text = puppy.breed,
+                    style = MaterialTheme.typography.caption,
+                    modifier = Modifier
+                        .weight(1f)
+                        .wrapContentWidth(Alignment.Start)
+                )
+                Text(
+                    text = puppy.age + " | " + puppy.gender + " | " + puppy.size,
+                    style = MaterialTheme.typography.caption,
+                    modifier = Modifier
+                        .weight(1f)
+                        .wrapContentWidth(Alignment.Start)
+                )
             }
         }
     }
