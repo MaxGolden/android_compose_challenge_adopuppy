@@ -14,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -29,88 +30,40 @@ import com.example.adopuppymax.ui.utils.scrim
 import dev.chrisbanes.accompanist.insets.navigationBarsPadding
 import dev.chrisbanes.accompanist.insets.statusBarsPadding
 
-//private val FabSize = 56.dp
-//private const val ExpandedSheetAlpha = 0.96f
 
 @Composable
 fun PuppyDetails(
-    courseId: Long,
-    selectCourse: (Long) -> Unit,
+    puppyId: Long,
+    selectPuppy: (Long) -> Unit,
     upPress: () -> Unit
 ) {
-    // Simplified for the sample
-    val puppy = remember(courseId) { PuppyRepo.getPuppy(courseId) }
-    PuppyDetails(puppy, selectCourse, upPress)
+    val puppy = remember(puppyId) { PuppyRepo.getPuppy(puppyId) }
+    PuppyDetails(puppy, selectPuppy, upPress)
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun PuppyDetails(
     puppy: Puppy,
-    selectCourse: (Long) -> Unit,
+    selectPuppy: (Long) -> Unit,
     upPress: () -> Unit
 ) {
     PuppyMaxTheme {
-        CourseDescription(puppy, selectCourse, upPress)
-
-//        BoxWithConstraints {
-//            val fabSize = with(LocalDensity.current) { FabSize.toPx() }
-//            val dragRange = constraints.maxHeight - fabSize
-//            val scope = rememberCoroutineScope()
-
-//            BackPressHandler(
-//                enabled = sheetState.currentValue == SheetState.Open,
-//                onBack = {
-//                    scope.launch {
-//                        sheetState.animateTo(SheetState.Closed)
-//                    }
-//                }
-//            )
-//            Box(
-//                // The Lessons sheet is initially closed and appears as a FAB. Make it openable by
-//                // swiping or clicking the FAB.
-//                Modifier.swipeable(
-//                    state = sheetState,
-//                    anchors = mapOf(
-//                        0f to SheetState.Closed,
-//                        -dragRange to SheetState.Open
-//                    ),
-//                    thresholds = { _, _ -> FractionalThreshold(0.5f) },
-//                    orientation = Vertical
-//                )
-//            ) {
-//                val openFraction = if (sheetState.offset.value.isNaN()) {
-//                    0f
-//                } else {
-//                    -sheetState.offset.value / dragRange
-//                }.coerceIn(0f, 1f)
-//                CourseDescription(puppy, selectCourse, upPress)
-//                LessonsSheet(
-//                    puppy,
-//                    openFraction,
-//                    this@BoxWithConstraints.constraints.maxWidth.toFloat(),
-//                    this@BoxWithConstraints.constraints.maxHeight.toFloat()
-//                ) { state ->
-//                    scope.launch {
-//                        sheetState.animateTo(state)
-//                    }
-//                }
-//            }
-//        }
+        PuppyDescription(puppy, selectPuppy, upPress)
     }
 }
 
 @Composable
-private fun CourseDescription(
-    course: Puppy,
-    selectCourse: (Long) -> Unit,
+private fun PuppyDescription(
+    puppy: Puppy,
+    selectPuppy: (Long) -> Unit,
     upPress: () -> Unit
 ) {
     Surface(modifier = Modifier.fillMaxSize()) {
         LazyColumn {
-            item { PuppyDescriptionHeader(course, upPress) }
-            item { PuppyDescriptionBody(course) }
-            item { RelatedPuppies(course.id, selectCourse) }
+            item { PuppyDescriptionHeader(puppy, upPress) }
+            item { PuppyDescriptionBody(puppy) }
+            item { RelatedPuppies(puppy.id, selectPuppy) }
         }
     }
 }
@@ -125,14 +78,15 @@ private fun PuppyDescriptionHeader(
             painter = painterResource(id = puppy.thumbResource),
             contentDescription = null,
             modifier = Modifier
+                .height(300.dp)
                 .fillMaxWidth()
-                .scrim(colors = listOf(Color(0x80000000), Color(0x33000000)))
-                .aspectRatio(4f / 3f)
+                .scrim(colors = listOf(Color(0x80000000), Color(0x33000000))),
+            contentScale = ContentScale.Crop
         )
         TopAppBar(
             backgroundColor = Color.Transparent,
             elevation = 0.dp,
-            contentColor = Color.White, // always white as image has dark scrim
+            contentColor = Color.White,
             modifier = Modifier.statusBarsPadding()
         ) {
             IconButton(onClick = upPress) {
@@ -145,40 +99,33 @@ private fun PuppyDescriptionHeader(
                 painter = painterResource(id = R.drawable.ic_pets_white_24dp),
                 contentDescription = null,
                 modifier = Modifier
-                    .padding(bottom = 4.dp)
+                    .padding(bottom = 10.dp)
                     .size(24.dp)
                     .align(Alignment.CenterVertically)
             )
             Spacer(modifier = Modifier.weight(1f))
         }
-//        OutlinedAvatar(
-//            url = course.instructor,
-//            modifier = Modifier
-//                .size(40.dp)
-//                .align(Alignment.BottomCenter)
-//                .offset(y = 20.dp) // overlap bottom of image
-//        )
     }
 }
 
 @Composable
 private fun PuppyDescriptionBody(puppy: Puppy) {
     Text(
-        text = puppy.name.toUpperCase(),
-        color = MaterialTheme.colors.primary,
-        style = MaterialTheme.typography.body2,
+        text = puppy.breed,
+        style = MaterialTheme.typography.body1,
         textAlign = TextAlign.Center,
         modifier = Modifier
             .fillMaxWidth()
             .padding(
                 start = 16.dp,
-                top = 36.dp,
+                top = 24.dp,
                 end = 16.dp,
                 bottom = 16.dp
             )
     )
     Text(
         text = puppy.name,
+        color = MaterialTheme.colors.primary,
         style = MaterialTheme.typography.h4,
         textAlign = TextAlign.Center,
         modifier = Modifier
@@ -188,17 +135,25 @@ private fun PuppyDescriptionBody(puppy: Puppy) {
     Spacer(modifier = Modifier.height(16.dp))
     CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
         Text(
-            text = stringResource(id = R.string.more_puppies),
+            text = puppy.age + " | " + puppy.gender + " | " + puppy.size,
             style = MaterialTheme.typography.body1,
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
         )
+        Text(
+            text = puppy.location,
+            style = MaterialTheme.typography.body1,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp)
+        )
     }
     Divider(modifier = Modifier.padding(16.dp))
     Text(
-        text = stringResource(id = R.string.more_puppies),
+        text = stringResource(id = R.string.color_info),
         style = MaterialTheme.typography.h6,
         textAlign = TextAlign.Center,
         modifier = Modifier
@@ -207,14 +162,61 @@ private fun PuppyDescriptionBody(puppy: Puppy) {
     )
     CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
         Text(
-            text = stringResource(id = R.string.more_puppies),
+            text = puppy.color,
             style = MaterialTheme.typography.body1,
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
                     start = 16.dp,
-                    top = 16.dp,
+                    top = 0.dp,
+                    end = 16.dp,
+                    bottom = 32.dp
+                )
+        )
+    }
+    Text(
+        text = stringResource(id = R.string.health_info),
+        style = MaterialTheme.typography.h6,
+        textAlign = TextAlign.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    )
+    CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+        Text(
+            text = puppy.healthState,
+            style = MaterialTheme.typography.body1,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    start = 16.dp,
+                    top = 0.dp,
+                    end = 16.dp,
+                    bottom = 32.dp
+                )
+        )
+    }
+    Divider(modifier = Modifier.padding(16.dp))
+    Text(
+        text = "Meat " + puppy.name,
+        style = MaterialTheme.typography.h6,
+        textAlign = TextAlign.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    )
+    CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+        Text(
+            text = puppy.description,
+            style = MaterialTheme.typography.body1,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    start = 16.dp,
+                    top = 0.dp,
                     end = 16.dp,
                     bottom = 32.dp
                 )
@@ -225,7 +227,7 @@ private fun PuppyDescriptionBody(puppy: Puppy) {
 @Composable
 private fun RelatedPuppies(
     puppyId: Long,
-    selectCourse: (Long) -> Unit
+    selectPuppy: (Long) -> Unit
 ) {
     val relatedPuppies: List<Puppy> = remember(puppyId) { PuppyRepo.getRelatedPuppies(puppyId) }
     PuppyMaxTheme {
@@ -255,7 +257,7 @@ private fun RelatedPuppies(
                     items(relatedPuppies) { related ->
                         PuppyListItem(
                             puppy = related,
-                            onClick = { selectCourse(related.id) },
+                            onClick = { selectPuppy(related.id) },
                             titleStyle = MaterialTheme.typography.body2,
                             modifier = Modifier
                                 .padding(end = 8.dp)
@@ -275,18 +277,18 @@ private fun RelatedPuppies(
 private fun PuppyDetailsPreview() {
     val puppyId = puppies.first().id
     PuppyDetails(
-        courseId = puppyId,
-        selectCourse = { },
+        puppyId = puppyId,
+        selectPuppy = { },
         upPress = { }
     )
 }
 
-@Preview(name = "Related")
-@Composable
-private fun RelatedPuppiesPreview() {
-    val related = puppies.random()
-    RelatedPuppies(
-        puppyId = related.id,
-        selectCourse = { }
-    )
-}
+//@Preview(name = "Related")
+//@Composable
+//private fun RelatedPuppiesPreview() {
+//    val related = puppies.random()
+//    RelatedPuppies(
+//        puppyId = related.id,
+//        selectPuppy = { }
+//    )
+//}

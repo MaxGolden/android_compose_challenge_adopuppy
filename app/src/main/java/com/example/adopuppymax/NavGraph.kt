@@ -54,8 +54,8 @@ fun NavGraph(startDestination: String = MainDestinations.PUPPY_DEMO_ROUTE) {
         ) { backStackEntry ->
             val arguments = requireNotNull(backStackEntry.arguments)
             PuppyDetails(
-                courseId = arguments.getLong(PUPPY_DETAIL_ID_KEY),
-                selectCourse = actions.selectCourse,
+                puppyId = arguments.getLong(PUPPY_DETAIL_ID_KEY),
+                selectPuppy = actions.selectCourse,
                 upPress = actions.upPress
             )
         }

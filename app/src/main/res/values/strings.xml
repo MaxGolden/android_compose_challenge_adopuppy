@@ -9,4 +9,6 @@
     <string name="puppy_available">puppy available</string>
     <string name="more_puppies">More Puppies</string>
 
+    <string name="health_info">HEALTH</string>
+    <string name="color_info">COLOR</string>
 </resources>
