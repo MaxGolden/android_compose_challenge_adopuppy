@@ -7,4 +7,7 @@
     <color name="max_color_main_light">#4dd0e1</color>
     <color name="max_color_main_mid">#00bcd4</color>
     <color name="max_color_main_dark">#00acc1</color>
+
+    <color name="immersive_sys_ui">#33000000</color>
+    <color name="nav_bar">@color/immersive_sys_ui</color>
 </resources>

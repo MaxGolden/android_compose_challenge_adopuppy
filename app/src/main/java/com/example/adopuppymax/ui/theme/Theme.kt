@@ -1,34 +1,24 @@
 package com.example.adopuppymax.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.darkColors
-import androidx.compose.material.lightColors
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 
 private val DarkColorPalette = darkColors(
     primary = max_color_main_light,
     primaryVariant = max_color_main_dark,
-    secondary = Teal200
+    secondary = Teal200,
+    surface = PuppyDarkPrimary
 )
 
 private val LightColorPalette = lightColors(
     primary = max_color_main_mid,
     primaryVariant = max_color_main_dark,
     secondary = Teal200
-
-    /* Other default colors to override
-    background = Color.White,
-    surface = Color.White,
-    onPrimary = Color.White,
-    onSecondary = Color.Black,
-    onBackground = Color.Black,
-    onSurface = Color.Black,
-    */
 )
 
 @Composable
-fun AdopuppymaxTheme(
+fun PuppyMaxTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable() () -> Unit
 ) {
@@ -40,8 +30,26 @@ fun AdopuppymaxTheme(
 
     MaterialTheme(
         colors = colors,
-        typography = Typography,
-        shapes = Shapes,
+        typography = typography,
+        shapes = shapes,
         content = content
     )
+}
+
+object PuppyTheme {
+    val colors: Colors
+        @Composable
+        get() = MaterialTheme.colors
+
+    val typography: Typography
+        @Composable
+        get() = MaterialTheme.typography
+
+    val shapes: Shapes
+        @Composable
+        get() = MaterialTheme.shapes
+
+    val elevations: Elevations
+        @Composable
+        get() = LocalElevations.current
 }
