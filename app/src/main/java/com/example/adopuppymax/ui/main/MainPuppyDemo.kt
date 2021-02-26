@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -44,7 +45,7 @@ fun MainPuppyDemo(
         PuppyAppBar()
         StaggeredVerticalGrid(
             maxColumnWidth = 220.dp,
-            modifier = Modifier.padding(start = 4.dp, bottom = 4.dp, end = 4.dp)
+            modifier = Modifier.padding(start = 4.dp, bottom = 60.dp, end = 4.dp)
         ) {
             puppyList.forEach { puppy ->
                 DisplayPuppy(puppy, selectPuppy)
@@ -84,7 +85,8 @@ fun DisplayPuppy(
                     .constrainAs(image) {
                         centerHorizontallyTo(parent)
                         top.linkTo(parent.top)
-                    }
+                    },
+                contentScale = ContentScale.Crop
             )
             Text(
                 text = puppy.breed,
