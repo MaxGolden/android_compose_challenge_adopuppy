@@ -261,8 +261,7 @@ private fun RelatedPuppies(
                             titleStyle = MaterialTheme.typography.body2,
                             modifier = Modifier
                                 .padding(end = 8.dp)
-                                .size(288.dp, 80.dp),
-                            iconSize = 14.dp
+                                .size(288.dp, 80.dp)
                         )
                     }
                 }

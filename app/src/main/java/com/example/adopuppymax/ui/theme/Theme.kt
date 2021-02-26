@@ -3,6 +3,8 @@ package com.example.adopuppymax.ui.theme
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.unit.dp
 
 private val DarkColorPalette = darkColors(
     primary = max_color_main_light,
@@ -17,6 +19,10 @@ private val LightColorPalette = lightColors(
     secondary = Teal200
 )
 
+private val LightElevation = Elevations()
+
+private val DarkElevation = Elevations(card = 1.dp)
+
 @Composable
 fun PuppyMaxTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -27,28 +33,20 @@ fun PuppyMaxTheme(
     } else {
         LightColorPalette
     }
-
-    MaterialTheme(
-        colors = colors,
-        typography = typography,
-        shapes = shapes,
-        content = content
-    )
+    val elevation = if (darkTheme) DarkElevation else LightElevation
+    CompositionLocalProvider(
+        LocalElevations provides elevation
+    ) {
+        MaterialTheme(
+            colors = colors,
+            typography = typography,
+            shapes = shapes,
+            content = content
+        )
+    }
 }
 
 object PuppyTheme {
-    val colors: Colors
-        @Composable
-        get() = MaterialTheme.colors
-
-    val typography: Typography
-        @Composable
-        get() = MaterialTheme.typography
-
-    val shapes: Shapes
-        @Composable
-        get() = MaterialTheme.shapes
-
     val elevations: Elevations
         @Composable
         get() = LocalElevations.current
